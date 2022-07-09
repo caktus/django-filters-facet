@@ -1,0 +1,27 @@
+{% load search_tags %}
+<h3>Refine Results</h3>
+<ul class="facets nav nav-list">
+{% for facet in filter.get_facets %}
+    <li class="nav-header">
+        {% if facet.label %}{{ facet.label|title }}{% else %}{{ facet.filter.label|title }}{% endif %}
+    </li>
+    {% for facet_item in facet.items_for_display %}
+        <li class="nav-item">
+            {% if facet_item.is_active %}
+                {{ facet_item.label|title }} ({{ facet_item.count }})
+                <a class="facet_removal" href="{% remove_qsarg facet.field_name %}">
+                    <span class="glyphicon glyphicon-remove-sign"></span>
+                </a>
+            {% else %}
+                <a href='{% add_qsarg facet.field_name facet_item.value %}'>
+                    {{ facet_item.label|title }} ({{ facet_item.count }})
+                </a>
+            {% endif %}
+        </li>
+        {% empty %}
+        <li  class="nav-item">
+            <i>None</i>
+        </li>
+    {% endfor %}
+{% endfor %}
+</ul>
