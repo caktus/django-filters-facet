@@ -1,0 +1,34 @@
+[tool.poetry]
+name = "django-filters-facet"
+version = "0.1.0"
+description = ""
+authors = [ "Colin Copeland <copelco@caktusgroup.com>" ]
+packages = [ { include = "django_filters_facet", from = "src" } ]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+Django = ">= 3.2"
+django-filter = ">= 22.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "~7"
+pre-commit = "~2.19.0"
+black = "=22.6.0"
+flake8 = "~4.0.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0", "setuptools"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+target_version = [ 'py39' ]
+
+[tool.isort]
+py_version = 36
+profile = "black"
+multi_line_output = 3
+include_trailing_comma = true
+use_parentheses = true
+line_length = 100
+lines_between_types = 1
+src_paths = [ "src", "tests" ]
