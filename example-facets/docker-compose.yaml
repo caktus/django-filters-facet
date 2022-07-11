@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  django:
+    environment:
+      DJANGO_SETTINGS_MODULE: example_project.settings
+      DATABASE_URL: postgres://postgres@db:5432/postgres
+      ENVIRONMENT: staging
+      DJANGO_SECRET_KEY: dummy
+      DOMAIN: localhost
+      SESSION_COOKIE_SECURE: "False"
+      DJANGO_SECURE_SSL_REDIRECT: "False"
+    build:
+      context: ..
+      dockerfile: example-facets/Dockerfile
+      target: dev
+    command: ["sleep", "infinity"]
+    links:
+      - db:db
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../src/django_filters_facet:/usr/local/lib/python3.10/site-packages/django_filters_facet
+      - .:/code
+
+  db:
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+      DATABASE_URL: postgres://postgres@127.0.0.1:5432/postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
