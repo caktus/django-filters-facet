@@ -21,6 +21,7 @@ services:
       - "8000:8000"
     volumes:
       - ../src/django_filters_facet:/usr/local/lib/python3.10/site-packages/django_filters_facet
+      - node_modules:/code/node_modules
       - .:/code
 
   db:
@@ -33,3 +34,4 @@ services:
 
 volumes:
   pgdata:
+  node_modules: {}

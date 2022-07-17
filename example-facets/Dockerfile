@@ -18,6 +18,7 @@ RUN set -ex \
     && RUN_DEPS=" \
     mime-support \
     postgresql-client-14 \
+    ca-certificates \
     " \
     && seq 1 8 | xargs -I{} mkdir -p /usr/share/man/man{} \
     && apt-get update \
@@ -50,6 +51,26 @@ WORKDIR /code/
 ADD ./example-facets /code/
 
 FROM base AS dev
+
+# Install packages needed to develop your application (not build deps):
+#   mime-support -- for mime types when serving static files
+#   nodejs -- for Tailwind
+# We need to recreate the /usr/share/man/man{1..8} directories first because
+# they were clobbered by a parent image.
+RUN set -ex \
+    && DEV_DEPS=" \
+    nodejs \
+    " \
+    && seq 1 8 | xargs -I{} mkdir -p /usr/share/man/man{} \
+    && apt-get update \
+    && apt-get -y install wget gnupg2 lsb-release\
+    && sh -c 'echo "deb https://deb.nodesource.com/node_16.x $(lsb_release -cs) main" > /etc/apt/sources.list.d/nodesource.list' \
+    && wget --quiet -O- https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends $DEV_DEPS \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN npm install package.json
 
 # Install build deps, then run `pip install`, then remove unneeded build deps all in a single step.
 # Correct the path to your production requirements file, if needed.
