@@ -131,4 +131,5 @@ dmypy.json
 .pyre/
 
 # Project
+main.css
 stops.csv
