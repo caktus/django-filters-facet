@@ -24,6 +24,11 @@ class Facet:
         """The associated filter's Django form."""
         return self.filter.parent.form
 
+    @property
+    def form_field(self):
+        """"""
+        return self.form.fields[self.field_name]
+
     def get_queryset(self):
         qs = self.filter.parent.qs
         if self.exclude:
@@ -52,6 +57,13 @@ class Facet:
                 value = int(value)
             return value
 
+    def get_item_label(self, item_value):
+        if not hasattr(self.form_field, "choices"):
+            return item_value
+        for value, label in self.form_field.choices:
+            if value == item_value:
+                return label
+
     def items_for_display(self):
         """Returns context data for displaying the facet's values and counts."""
         filtered_value = self.get_filtered_value()
@@ -64,9 +76,10 @@ class Facet:
             facet_item_counts = [{self.field_name: filtered_value, "count": 0}]
         for item in facet_item_counts:
             item_value = item[self.field_name]
+            item_label = self.get_item_label(item_value=item_value)
             item_is_active = filtered_value == item_value
             yield {
-                "label": item_value,
+                "label": item_label,
                 "value": item_value,
                 "count": item["count"],
                 "is_active": item_is_active,
