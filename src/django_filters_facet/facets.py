@@ -76,6 +76,8 @@ class Facet:
             facet_item_counts = [{self.field_name: filtered_value, "count": 0}]
         for item in facet_item_counts:
             item_value = item[self.field_name]
+            if item_value is None and self.form_field.null_value:
+                item_value = self.form_field.null_value
             item_label = self.get_item_label(item_value=item_value)
             item_is_active = filtered_value == item_value
             yield {
