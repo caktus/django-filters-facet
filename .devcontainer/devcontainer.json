@@ -33,7 +33,8 @@
 				"dbaeumer.vscode-eslint",
 				"csstools.postcss",
 				"esbenp.prettier-vscode",
-				"bradlc.vscode-tailwindcss"
+				"bradlc.vscode-tailwindcss",
+				"batisteo.vscode-django"
 			]
 		}
 	}

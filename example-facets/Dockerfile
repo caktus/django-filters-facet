@@ -53,13 +53,13 @@ ADD ./example-facets /code/
 FROM base AS dev
 
 # Install packages needed to develop your application (not build deps):
-#   mime-support -- for mime types when serving static files
 #   nodejs -- for Tailwind
 # We need to recreate the /usr/share/man/man{1..8} directories first because
 # they were clobbered by a parent image.
 RUN set -ex \
     && DEV_DEPS=" \
     nodejs \
+    git-core \
     " \
     && seq 1 8 | xargs -I{} mkdir -p /usr/share/man/man{} \
     && apt-get update \
@@ -68,24 +68,34 @@ RUN set -ex \
     && wget --quiet -O- https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - \
     && apt-get update \
     && apt-get install -y --no-install-recommends $DEV_DEPS \
+    && npm install package.json \
     && rm -rf /var/lib/apt/lists/*
 
-RUN npm install package.json
+# While example-project is in /code, the full django-filters-facet repo is
+# in /django-filters-facet/ (including tests)
+RUN mkdir /django-filters-facet/
+WORKDIR /django-filters-facet/
+ADD . /django-filters-facet/
 
-# Install build deps, then run `pip install`, then remove unneeded build deps all in a single step.
+# Install pytest build deps, then run `pip install`, then remove unneeded build deps all in a single step.
 # Correct the path to your production requirements file, if needed.
-# RUN set -ex \
-#     && BUILD_DEPS=" \
-#     build-essential \
-#     libpq-dev \
-#     git-core \
-#     " \
-#     && apt-get update \
-#     && apt-get install -y --no-install-recommends $BUILD_DEPS \
-#     && pip install --no-cache-dir -r /requirements/dev.txt \
-#     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $BUILD_DEPS \
-#     && rm -rf /var/lib/apt/lists/*
+RUN set -ex \
+    && BUILD_DEPS=" \
+    build-essential \
+    libpq-dev \
+    " \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends $BUILD_DEPS \
+    # add django-filters-facet to example-project site-packges
+    && pip install -e . \
+    # pytest & django-filters-facet build deps
+    && pip install poetry \
+    && poetry install \
+    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $BUILD_DEPS \
+    && rm -rf /var/lib/apt/lists/*
 
 ENV DJANGO_SETTINGS_MODULE=example_project.settings.dev
+
+WORKDIR /code/
 
 CMD ["python", "/code/manage.py", "runserver", "0.0.0.0:8000"]
