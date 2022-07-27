@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.db.models.functions import ExtractYear
 
 import pytest
 
@@ -57,3 +58,17 @@ class TestChoicesField:
             {"count": 0, "is_active": True, "label": "1st", "value": 1},
         ]
         assert list(f.filters["grade"].facet.items_for_display()) == expected
+
+
+@pytest.mark.django_db
+class TestBirthYearField:
+    def test_foo(self):
+        StudentFactory(dob="1985-07-20")
+        StudentFactory(dob="1987-04-02")
+        StudentFactory(dob="1987-11-01")
+        f = StudentFilterSet()
+        expected = [
+            {"count": 2, "is_active": False, "label": 1987, "value": 1987},
+            {"count": 1, "is_active": False, "label": 1985, "value": 1985},
+        ]
+        assert list(f.filters["year"].facet.items_for_display()) == expected
