@@ -17,3 +17,4 @@ class StudentFactory(factory.django.DjangoModelFactory):
     name = factory.Faker("name_nonbinary")
     school = factory.SubFactory(SchoolFactory)
     grade = Student.Grade.FIRST
+    dob = factory.Faker("date_of_birth")

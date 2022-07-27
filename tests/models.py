@@ -25,3 +25,4 @@ class Student(models.Model):
     name = models.CharField(max_length=255)
     school = models.ForeignKey(School, on_delete=models.CASCADE)
     grade = models.SmallIntegerField(choices=Grade.choices)
+    dob = models.DateField()
