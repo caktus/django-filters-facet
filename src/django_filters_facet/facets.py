@@ -46,7 +46,7 @@ class Facet:
         if self.items:
             return self.items
         qs = self.get_queryset()
-        return qs.values(self.field_name).annotate(count=Count("id")).order_by("-count")
+        return qs.values(self.field_name).annotate(count=Count("pk")).order_by("-count")
 
     def get_filtered_value(self):
         """Returns the FilterSet field's current filtered value."""
