@@ -29,3 +29,9 @@ def show_facets(context, filter_):
         "filter": filter_,
         "request": context["request"],
     }
+
+
+@register.simple_tag
+def get_facet_display(filter_set, filter_name, value):
+    facet = filter_set.filters[filter_name].facet
+    return facet.get_item_label(value)
