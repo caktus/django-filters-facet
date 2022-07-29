@@ -1,20 +1,23 @@
 import django_filters
 
-from .models import Stop
+from .models import Stop, SEARCH_TYPE_CHOICES
 from django_filters_facet import Facet, FacetedFilterSet
 
 
 class StopFilterSet(FacetedFilterSet):
     search_type = django_filters.ChoiceFilter(
-        choices=Stop.SEARCH_TYPE_CHOICES,
+        field_name="driver_search__type",
+        choices=SEARCH_TYPE_CHOICES,
         null_label="Not Searched",
+        label="search type",
     )
 
     class Meta:
         model = Stop
-        fields = ["driver_gender", "stop_purpose"]
+        fields = ["agency", "purpose"]
 
     def configure_facets(self):
-        self.filters["stop_purpose"].facet = Facet()
+        self.filters["agency"].facet = Facet()
+        self.filters["purpose"].facet = Facet()
         self.filters["search_type"].facet = Facet()
-        self.filters["driver_gender"].facet = Facet()
+        # self.filters["driver_gender"].facet = Facet()

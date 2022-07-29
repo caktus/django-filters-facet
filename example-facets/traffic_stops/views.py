@@ -1,7 +1,10 @@
+from django.db.models import F, FilteredRelation, Q, ExpressionWrapper
+from django.db import models
+
 from django.views.generic.list import ListView
 
 from .filters import StopFilterSet
-from .models import Stop
+from .models import Stop, SEARCH_TYPE_CHOICES
 
 
 class StopListView(ListView):
@@ -12,9 +15,29 @@ class StopListView(ListView):
     paginate_by = 25
 
     def get_queryset(self):
-        self.filter_set = StopFilterSet(
-            self.request.GET, queryset=super().get_queryset()
+        qs = (
+            super()
+            .get_queryset()
+            .annotate(
+                driver=FilteredRelation(
+                    "person",
+                    condition=Q(person__type="D"),
+                ),
+                driver_search=FilteredRelation(
+                    "search",
+                    condition=Q(search__driver_search=True),
+                ),
+            )
+            .annotate(
+                search_type=ExpressionWrapper(
+                    F("driver_search__type"),
+                    output_field=models.SmallIntegerField(choices=SEARCH_TYPE_CHOICES),
+                ),
+                driver_gender=F("driver__gender"),
+                driver_race=F("driver__race"),
+            )
         )
+        self.filter_set = StopFilterSet(self.request.GET, queryset=qs)
         return self.filter_set.qs
 
     def get_context_data(self, **kwargs):

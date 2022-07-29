@@ -15,8 +15,8 @@ class Facet:
     queryset: Q = None
 
     @property
-    def field_name(self):
-        """The associated filter's field name (likely the model's field name)."""
+    def filter_name(self):
+        """The filter's attribute name on the FilterSet class."""
         return self.filter.filter_field_name
 
     @property
@@ -27,7 +27,7 @@ class Facet:
     @property
     def form_field(self):
         """"""
-        return self.form.fields[self.field_name]
+        return self.form.fields[self.filter_name]
 
     def get_queryset(self):
         qs = self.filter.parent.qs
@@ -46,13 +46,17 @@ class Facet:
         if self.items:
             return self.items
         qs = self.get_queryset()
-        return qs.values(self.field_name).annotate(count=Count("pk")).order_by("-count")
+        return (
+            qs.values(self.filter.field_name)
+            .annotate(count=Count("pk"))
+            .order_by("-count")
+        )
 
     def get_filtered_value(self):
         """Returns the FilterSet field's current filtered value."""
-        form_value = self.form.data.get(self.field_name)
+        form_value = self.form.data.get(self.filter_name)
         if form_value:
-            value = self.form.fields[self.field_name].to_python(form_value)
+            value = self.form.fields[self.filter_name].to_python(form_value)
             if type(value) is str and value.isnumeric():
                 value = int(value)
             return value
@@ -75,7 +79,7 @@ class Facet:
             # the results to zero results. The facet should still show.
             facet_item_counts = [{self.field_name: filtered_value, "count": 0}]
         for item in facet_item_counts:
-            item_value = item[self.field_name]
+            item_value = item[self.filter.field_name]
             if item_value is None and self.form_field.null_value:
                 item_value = self.form_field.null_value
             item_label = self.get_item_label(item_value=item_value)

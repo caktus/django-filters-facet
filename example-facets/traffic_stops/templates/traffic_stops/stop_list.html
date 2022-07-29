@@ -31,7 +31,7 @@
           <td class="py-4 px-6">{{ stop.officer_id }}</td>
           <td class="py-4 px-6">{{ stop.get_stop_purpose_display }}</td>
           <td class="py-4 px-6">
-            {{ stop.get_search_type_display|default:'' }}
+            {% get_facet_display filter 'search_type' stop.search_type %}
           </td>
         </tr>
         {% endfor %}

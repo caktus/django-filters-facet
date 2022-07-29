@@ -132,4 +132,4 @@ dmypy.json
 
 # Project
 main.css
-stops.csv
+example-facets/traffic_stops/data/*.csv

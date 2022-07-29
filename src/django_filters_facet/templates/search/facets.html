@@ -11,7 +11,7 @@
 >
   {% for facet_item in facet.items_for_display %}
   <a
-    href="{% if facet_item.is_active %}{% remove_qsarg facet.field_name %}{% else %}{% add_qsarg facet.field_name facet_item.value %}{% endif %}"
+    href="{% if facet_item.is_active %}{% remove_qsarg facet.filter_name %}{% else %}{% add_qsarg facet.filter_name facet_item.value %}{% endif %}"
     class="block py-2 px-4 w-full {% if facet_item.is_active %}text-white bg-blue-700 dark:bg-gray-900{% endif %} {% if not forloop.last %}border-b{% endif %} border-gray-200 cursor-pointer {% if not facet_item.is_active %}hover:bg-gray-100 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:text-blue-700{% endif %} dark:border-gray-600 {% if facet_item.is_active %}dark:hover:bg-gray-900{% else %}dark:hover:bg-gray-600{% endif %} dark:hover:text-white dark:focus:ring-gray-500 dark:focus:text-white"
   >
     {{ facet_item.label|title }}
