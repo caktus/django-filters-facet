@@ -15,7 +15,7 @@ class StopFilterSet(FacetedFilterSet):
 
     class Meta:
         model = Stop
-        fields = ["agency", "purpose"]
+        fields = ["agency", "driver_race", "agency", "purpose"]
 
     def configure_facets(self):
         self.filters["agency"].facet = Facet()

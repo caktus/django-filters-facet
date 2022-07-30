@@ -62,10 +62,7 @@ class StopListView(ListView):
                 ),
             )
             .annotate(
-                search_type=ExpressionWrapper(
-                    F("driver_search__type"),
-                    output_field=models.SmallIntegerField(choices=SEARCH_TYPE_CHOICES),
-                ),
+                search_type=F("driver_search__type"),
                 driver_gender=F("driver__gender"),
             )
         )
