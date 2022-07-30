@@ -11,6 +11,7 @@ class StopFilterSet(FacetedFilterSet):
         null_label="Not Searched",
         label="search type",
     )
+    driver_race = django_filters.CharFilter(label="Driver Race")
 
     class Meta:
         model = Stop
@@ -18,6 +19,6 @@ class StopFilterSet(FacetedFilterSet):
 
     def configure_facets(self):
         self.filters["agency"].facet = Facet()
+        self.filters["driver_race"].facet = Facet()
         self.filters["purpose"].facet = Facet()
         self.filters["search_type"].facet = Facet()
-        # self.filters["driver_gender"].facet = Facet()

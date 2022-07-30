@@ -1,10 +1,11 @@
 from django.db.models import F, FilteredRelation, Q, ExpressionWrapper
+from django.db.models import Case, Value, When
 from django.db import models
 
 from django.views.generic.list import ListView
 
 from .filters import StopFilterSet
-from .models import Stop, SEARCH_TYPE_CHOICES
+from .models import Stop, Person, SEARCH_TYPE_CHOICES
 
 
 class StopListView(ListView):
@@ -27,6 +28,38 @@ class StopListView(ListView):
                     "search",
                     condition=Q(search__driver_search=True),
                 ),
+                driver_race=Case(
+                    When(
+                        driver__ethnicity=Person.Ethnicity.HISPANIC,
+                        then=Value(Person.Race.HISPANIC.label),
+                    ),
+                    When(
+                        driver__ethnicity=Person.Ethnicity.NON_HISPANIC,
+                        driver__race=Person.Race.ASIAN,
+                        then=Value(Person.Race.ASIAN.label),
+                    ),
+                    When(
+                        driver__ethnicity=Person.Ethnicity.NON_HISPANIC,
+                        driver__race=Person.Race.BLACK,
+                        then=Value(Person.Race.BLACK.label),
+                    ),
+                    When(
+                        driver__ethnicity=Person.Ethnicity.NON_HISPANIC,
+                        driver__race=Person.Race.NATVE_AMERICAN,
+                        then=Value(Person.Race.NATVE_AMERICAN.label),
+                    ),
+                    When(
+                        driver__ethnicity=Person.Ethnicity.NON_HISPANIC,
+                        driver__race=Person.Race.OTHER,
+                        then=Value(Person.Race.OTHER.label),
+                    ),
+                    When(
+                        driver__ethnicity=Person.Ethnicity.NON_HISPANIC,
+                        driver__race=Person.Race.WHITE,
+                        then=Value(Person.Race.WHITE.label),
+                    ),
+                    default=Value("???"),
+                ),
             )
             .annotate(
                 search_type=ExpressionWrapper(
@@ -34,7 +67,6 @@ class StopListView(ListView):
                     output_field=models.SmallIntegerField(choices=SEARCH_TYPE_CHOICES),
                 ),
                 driver_gender=F("driver__gender"),
-                driver_race=F("driver__race"),
             )
         )
         self.filter_set = StopFilterSet(self.request.GET, queryset=qs)

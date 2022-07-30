@@ -39,7 +39,6 @@ RACE_CHOICES = (
     ("W", "White"),
 )
 
-
 SEARCH_TYPE_CHOICES = (
     (1, "Consent"),
     (2, "Search Warrant"),
@@ -81,13 +80,25 @@ class Stop(models.Model):
 
 
 class Person(models.Model):
+    class Race(models.TextChoices):
+        ASIAN = "A", "Asian"
+        BLACK = "B", "Black"
+        NATVE_AMERICAN = "I", "Native American"
+        OTHER = "U", "Other"
+        WHITE = "W", "White"
+        HISPANIC = "H", "Hispanic"
+
+    class Ethnicity(models.TextChoices):
+        HISPANIC = "H", "Hispanic"
+        NON_HISPANIC = "N", "Non-Hispanic"
+
     person_id = models.IntegerField(primary_key=True)
     stop = models.ForeignKey(Stop, on_delete=models.CASCADE)
     type = models.CharField(max_length=2, choices=PERSON_TYPE_CHOICES)
     age = models.PositiveSmallIntegerField()
     gender = models.CharField(max_length=2, choices=GENDER_CHOICES)
-    ethnicity = models.CharField(max_length=2, choices=ETHNICITY_CHOICES)
-    race = models.CharField(max_length=2, choices=RACE_CHOICES)
+    ethnicity = models.CharField(max_length=2, choices=Ethnicity.choices)
+    race = models.CharField(max_length=2, choices=Race.choices)
 
 
 class Search(models.Model):
