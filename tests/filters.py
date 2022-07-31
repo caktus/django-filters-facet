@@ -20,5 +20,6 @@ class StudentFilterSet(FacetedFilterSet):
     def configure_facets(self):
         self.filters["grade"].facet = Facet()
         self.filters["year"].facet = Facet(
-            queryset=lambda qs: qs.annotate(year=ExtractYear("dob"))
+            queryset=lambda qs: qs.annotate(year=ExtractYear("dob")),
+            group_by_filter_name=True,
         )
