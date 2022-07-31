@@ -34,4 +34,4 @@ def show_facets(context, filter_):
 @register.simple_tag
 def get_facet_display(filter_set, filter_name, value):
     facet = filter_set.filters[filter_name].facet
-    return facet.get_item_label(value)
+    return facet.get_facet_item_label(value)
