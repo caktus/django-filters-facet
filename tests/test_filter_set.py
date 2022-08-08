@@ -9,6 +9,12 @@ from .filters import StudentFilterSet
 from .models import Student
 
 
+class TestFilterSet:
+    def test_get_facets(self):
+        fs = StudentFilterSet(queryset=Student.objects.all())
+        assert list(fs.get_facets())
+
+
 class TestAttachFacets:
     def test_facet_links_to_filter(self):
         fs = StudentFilterSet(queryset=Student.objects.all())

@@ -18,7 +18,7 @@ class FacetedFilterSet(django_filters.FilterSet):
                 filter_.facet.filter = filter_
 
     def configure_facets(self):
-        pass
+        raise NotImplementedError("Must implement configure_facets in subclass")
 
     def get_facets(self):
         for filter_ in self.filters.values():

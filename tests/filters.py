@@ -16,7 +16,7 @@ class StudentFilterSet(FacetedFilterSet):
 
     class Meta:
         model = Student
-        fields = ["grade"]
+        fields = ["grade", "name"]
 
     def configure_facets(self):
         self.filters["grade"].facet = Facet()
