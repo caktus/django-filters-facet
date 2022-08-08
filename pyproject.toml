@@ -28,6 +28,14 @@ build-backend = "poetry.core.masonry.api"
 [tool.black]
 target_version = [ 'py39' ]
 
+[tool.coverage.run]
+branch = true
+source = ["django_filters_facet"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 70
+
 [tool.isort]
 py_version = 36
 profile = "black"
@@ -42,4 +50,4 @@ src_paths = [ "src", "tests" ]
 testpaths = [ "tests" ]
 django_find_project = false
 pythonpath = [ ".", "src" ]
-addopts = "--ds=tests.settings"
+addopts = "--ds=tests.settings --cov --cov-config=pyproject.toml"

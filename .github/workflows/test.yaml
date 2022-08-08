@@ -42,7 +42,7 @@ jobs:
            poetry run pre-commit run --all-files
       - name: Run tests
         run: |
-          poetry run pytest --cov=src/django_filters_facet/ --cov-branch --cov-fail-under=70
+          poetry run pytest
         env:
           DJANGO_SETTINGS_MODULE: example_project.settings
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
