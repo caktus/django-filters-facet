@@ -27,9 +27,11 @@
             {{ stop.date }}
           </th>
           <td class="py-4 px-6">{{ stop.driver_race }}</td>
-          <td class="py-4 px-6">{{ stop.get_driver_gender_display }}</td>
+          <td class="py-4 px-6">
+            {% get_facet_display filter 'driver_gender' stop.driver_gender %}
+          </td>
           <td class="py-4 px-6">{{ stop.officer_id }}</td>
-          <td class="py-4 px-6">{{ stop.get_stop_purpose_display }}</td>
+          <td class="py-4 px-6">{{ stop.get_purpose_display }}</td>
           <td class="py-4 px-6">
             {% if stop.search_type %}{% get_facet_display filter 'search_type' stop.search_type %}{% endif %}
           </td>
