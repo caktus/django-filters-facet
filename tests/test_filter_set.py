@@ -1,13 +1,18 @@
-from django.db.models import Q
-from django.db.models.functions import ExtractYear
-
 import pytest
+
+from django.db.models import Q
 
 from django_filters_facet import Facet
 
 from .factories import StudentFactory
 from .filters import StudentFilterSet
 from .models import Student
+
+
+class TestFilterSet:
+    def test_get_facets(self):
+        fs = StudentFilterSet(queryset=Student.objects.all())
+        assert list(fs.get_facets())
 
 
 class TestAttachFacets:

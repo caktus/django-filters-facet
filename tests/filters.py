@@ -1,6 +1,7 @@
+import django_filters
+
 from django.db.models.functions import ExtractYear
 
-import django_filters
 from django_filters_facet import Facet, FacetedFilterSet
 
 from .models import Student
@@ -15,7 +16,7 @@ class StudentFilterSet(FacetedFilterSet):
 
     class Meta:
         model = Student
-        fields = ["grade"]
+        fields = ["grade", "name"]
 
     def configure_facets(self):
         self.filters["grade"].facet = Facet()
