@@ -38,7 +38,7 @@ jobs:
           poetry install
       - name: Run tests
         run: |
-          poetry run pytest
+          poetry run pytest --cov=src/django_filters_facet/ --cov-branch --cov-fail-under=70
         env:
           DJANGO_SETTINGS_MODULE: example_project.settings
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
