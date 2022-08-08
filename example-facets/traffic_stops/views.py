@@ -1,11 +1,8 @@
-from django.db.models import F, FilteredRelation, Q, ExpressionWrapper
-from django.db.models import Case, Value, When
-from django.db import models
-
+from django.db.models import Case, F, FilteredRelation, Q, Value, When
 from django.views.generic.list import ListView
 
 from .filters import StopFilterSet
-from .models import Stop, Person, SEARCH_TYPE_CHOICES
+from .models import Person, Stop
 
 
 class StopListView(ListView):

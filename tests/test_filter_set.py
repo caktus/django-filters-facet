@@ -1,7 +1,6 @@
-from django.db.models import Q
-from django.db.models.functions import ExtractYear
-
 import pytest
+
+from django.db.models import Q
 
 from django_filters_facet import Facet
 

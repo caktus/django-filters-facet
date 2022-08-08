@@ -1,6 +1,7 @@
+import django_filters
+
 from django.db.models.functions import ExtractYear
 
-import django_filters
 from django_filters_facet import Facet, FacetedFilterSet
 
 from .models import Student

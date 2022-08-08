@@ -1,7 +1,8 @@
 import django_filters
 
-from .models import Stop, SEARCH_TYPE_CHOICES
 from django_filters_facet import Facet, FacetedFilterSet
+
+from .models import SEARCH_TYPE_CHOICES, Stop
 
 
 class StopFilterSet(FacetedFilterSet):
