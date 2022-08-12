@@ -138,8 +138,52 @@ STATIC_ROOT = "/public/static"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# SECURITY
-# ------------------------------------------------------------------------------
+# A sample logging configuration. The only tangible logging
+# performed by this configuration is to send an email to
+# the site admins on every HTTP 500 error when DEBUG=False.
+# See http://docs.djangoproject.com/en/dev/topics/logging for
+# more details on how to customize your logging configuration.
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "normal": {
+            "format": "%(asctime)s %(name)-20s %(levelname)-8s %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        }
+    },
+    "filters": {
+        "require_debug_false": {"()": "django.utils.log.RequireDebugFalse"},
+        "require_debug_true": {"()": "django.utils.log.RequireDebugTrue"},
+    },
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "normal",
+        },
+        "mail_admins": {
+            "level": "ERROR",
+            "filters": ["require_debug_false"],
+            "class": "django.utils.log.AdminEmailHandler",
+        },
+    },
+    "loggers": {
+        "": {"handlers": ["console"], "level": "INFO"},
+        "django.request": {
+            "handlers": ["mail_admins"],
+            "level": "ERROR",
+            "propagate": True,
+        },
+        "django.security": {
+            "handlers": ["mail_admins"],
+            "level": "ERROR",
+            "propagate": True,
+        },
+    },
+}
+
+# DEPLOY: SECURITY
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-proxy-ssl-header
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-ssl-redirect
@@ -166,3 +210,23 @@ SECURE_CONTENT_TYPE_NOSNIFF = (
 )
 # https://docs.djangoproject.com/en/3.2/ref/settings/#secure-referrer-policy
 SECURE_REFERRER_POLICY = os.getenv("SECURE_REFERRER_POLICY", "same-origin")
+
+# DEPLOY: STATIC
+if os.getenv("WHITENOISE_ENABLED", "False") == "True":
+    # Disable Django's own staticfiles handling in favour of WhiteNoise
+    INSTALLED_APPS.remove("django.contrib.staticfiles")
+    INSTALLED_APPS.extend(
+        [
+            "whitenoise.runserver_nostatic",
+            "django.contrib.staticfiles",
+        ]
+    )
+    MIDDLEWARE.remove("django.middleware.security.SecurityMiddleware")
+    MIDDLEWARE = [
+        "django.middleware.security.SecurityMiddleware",
+        "whitenoise.middleware.WhiteNoiseMiddleware",
+    ] + MIDDLEWARE
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# DEPLOY: EMAIL
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

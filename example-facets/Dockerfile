@@ -2,9 +2,12 @@ FROM node:18-bullseye-slim as static_files
 
 WORKDIR /code
 ENV PATH /code/node_modules/.bin:$PATH
-COPY example-facets/package.json example-facets/package-lock.json /code/
+COPY example-facets/package.json example-facets/package-lock.json example-facets/postcss.config.js example-facets/tailwind.config.js /code/
 RUN npm install --silent
 COPY example-facets/example_project/static example_project/static
+COPY example-facets/example_project/templates example_project/templates
+COPY example-facets/traffic_stops/templates traffic_stops/templates
+COPY src/django_filters_facet/templates /django-filters-facet/src/django_filters_facet/templates
 RUN npm run build
 
 FROM python:3.10-slim-bullseye as base
@@ -93,8 +96,12 @@ COPY --from=package /django-filters-facet/dist /dist
 RUN set -ex \
     && pip install /dist/django_filters_facet*.whl
 
+# Create a group and user to run our app
+ARG APP_USER=appuser
+RUN groupadd -r ${APP_USER} && useradd --no-log-init -r -g ${APP_USER} ${APP_USER}
+
 # Call collectstatic (customize the following line with the minimal environment variables needed for manage.py to run):
-RUN DATABASE_URL='' ENVIRONMENT='' DJANGO_SECRET_KEY='dummy' DOMAIN='' python manage.py collectstatic --noinput --no-default-ignore
+RUN DATABASE_URL='' ENVIRONMENT='' DJANGO_SECRET_KEY='dummy' DOMAIN='' WHITENOISE_ENABLED='True' python manage.py collectstatic --noinput --no-default-ignore
 
 # Tell uWSGI where to find your wsgi file (change this):
 ENV UWSGI_WSGI_FILE=example_project/wsgi.py
@@ -106,7 +113,7 @@ ENV UWSGI_HTTP=:8000 UWSGI_MASTER=1 UWSGI_HTTP_AUTO_CHUNKED=1 UWSGI_HTTP_KEEPALI
 ENV UWSGI_WORKERS=2 UWSGI_THREADS=4
 
 # uWSGI static file serving configuration (customize or comment out if not needed):
-ENV UWSGI_STATIC_MAP="/static/=/code/public/static/" UWSGI_STATIC_EXPIRES_URI="/static/.*\.[a-f0-9]{12,}\.(css|js|png|jpg|jpeg|gif|ico|woff|ttf|otf|svg|scss|map|txt) 315360000"
+ENV UWSGI_STATIC_MAP="/static/=/public/static/" UWSGI_STATIC_EXPIRES_URI="/static/.*\.[a-f0-9]{12,}\.(css|js|png|jpg|jpeg|gif|ico|woff|ttf|otf|svg|scss|map|txt) 315360000"
 
 # Change to a non-root user
 USER ${APP_USER}:${APP_USER}
@@ -115,7 +122,7 @@ USER ${APP_USER}:${APP_USER}
 ENTRYPOINT ["/code/docker-entrypoint.sh"]
 
 # Start uWSGI
-CMD ["newrelic-admin", "run-program", "uwsgi", "--single-interpreter", "--enable-threads", "--show-config"]
+CMD ["uwsgi", "--single-interpreter", "--enable-threads", "--show-config"]
 
 FROM package AS dev
 
