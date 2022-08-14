@@ -7,7 +7,7 @@
   {% if facet.label %}{{ facet.label|title }}{% else %}{{ facet.filter.label|title }}{% endif %}
 </p>
 <div
-  class="text-sm font-medium text-gray-900 bg-white {% if not forloop.last %}mb-5{% endif %} border border-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+  class="overscroll-auto overflow-y-scroll max-h-80 text-sm font-medium text-gray-900 bg-white {% if not forloop.last %}mb-5{% endif %} border border-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
 >
   {% for facet_item in facet.items_for_display %}
   <a
