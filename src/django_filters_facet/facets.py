@@ -1,4 +1,8 @@
+import logging
+
 from django.db.models import Count
+
+logger = logging.getLogger(__name__)
 
 
 class Facet:
@@ -105,6 +109,7 @@ class Facet:
 
     def items_for_display(self):
         """Returns context data for displaying the facet's values and counts."""
+        logger.debug(self.filter_name)
         filtered_value = self.get_filtered_value()
         facet_item_counts = self.get_items()
         if self.is_filtered() and not facet_item_counts:
@@ -113,9 +118,11 @@ class Facet:
             facet_item_counts = [{self.group_by: filtered_value, "count": 0}]
         for item in facet_item_counts:
             item_value = self.get_facet_item_value(item[self.group_by])
-            yield {
+            data = {
                 "label": self.get_facet_item_label(item_value=item_value),
                 "value": item_value,
                 "count": item["count"],
                 "is_active": self.get_facet_item_is_active(item_value, filtered_value),
             }
+            logger.debug(data)
+            yield data
