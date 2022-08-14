@@ -11,10 +11,13 @@ class Facet:
     share values within that filter's field.
     """
 
-    def __init__(self, exclude=None, queryset=None, group_by_filter_name=False):
+    def __init__(
+        self, exclude=None, queryset=None, group_by_filter_name=False, order_by="-count"
+    ):
         self.exclude = exclude
         self.queryset = queryset
         self.group_by_filter_name = group_by_filter_name
+        self.order_by = order_by
 
     @property
     def filter_name(self):
@@ -67,7 +70,9 @@ class Facet:
         by passing in items when constructing the Facet.
         """
         qs = self.get_queryset()
-        return qs.values(self.group_by).annotate(count=Count("pk")).order_by("-count")
+        return (
+            qs.values(self.group_by).annotate(count=Count("pk")).order_by(self.order_by)
+        )
 
     def get_facet_item_value(self, value):
         """
