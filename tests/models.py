@@ -26,3 +26,11 @@ class Student(models.Model):
     school = models.ForeignKey(School, on_delete=models.CASCADE)
     grade = models.SmallIntegerField(choices=Grade.choices)
     dob = models.DateField()
+
+
+class Class(models.Model):
+    name = models.CharField(max_length=255)
+    students = models.ManyToManyField(Student, related_name="classes")
+
+    def __str__(self) -> str:
+        return self.name
