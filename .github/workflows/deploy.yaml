@@ -26,6 +26,8 @@ jobs:
           echo "DOCKER_REPO is $DOCKER_REPO"
           export DOCKER_TAG="$ENV-$(git rev-parse --short HEAD)"
           echo "DOCKER_TAG is $DOCKER_TAG"
+          aws --version
+          aws configure list
           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 472354598015.dkr.ecr.us-east-1.amazonaws.com
           docker build --pull -t $DOCKER_REPO:$DOCKER_TAG --target deploy -f example-facets/Dockerfile .
           docker push $DOCKER_REPO:$DOCKER_TAG
