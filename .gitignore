@@ -135,3 +135,4 @@ main.css
 example-facets/deploy/roles
 example-facets/traffic_stops/data/*.csv
 docker-compose.override.yml
+*.json
