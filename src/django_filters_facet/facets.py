@@ -109,7 +109,7 @@ class Facet:
         """Return True if the facet is currently filtered by this facet item."""
         if self.is_filtered():
             raw_filtered_value = self.get_facet_item_value(filtered_value)
-            return raw_filtered_value == item_value
+            return raw_filtered_value == item_value or item_value in raw_filtered_value
         return False
 
     def items_for_display(self):
