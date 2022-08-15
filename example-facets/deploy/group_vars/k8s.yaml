@@ -104,6 +104,7 @@ env_sentry_dsn: !vault |
 
 # Environment variables:
 k8s_environment_variables:
+  CONTAINER_IMAGE_TAG: "{{ k8s_container_image_tag }}"
   DJANGO_DEBUG: "{{ env_django_debug | string | title | string }}"
   DATABASE_URL: "{{ env_database_url }}"
   DJANGO_SETTINGS_MODULE: "{{ env_django_settings }}"

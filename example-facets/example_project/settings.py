@@ -259,6 +259,9 @@ if SENTRY_DSN:
         dsn=SENTRY_DSN,
         integrations=[DjangoIntegration()],
         environment=ENVIRONMENT,  # noqa: F405
+        release=os.getenv("CONTAINER_IMAGE_TAG"),
+        # % of captured performance monitoring transactions
+        traces_sample_rate=1.0,
     )
 
 # DEPLOY: ADMINS
