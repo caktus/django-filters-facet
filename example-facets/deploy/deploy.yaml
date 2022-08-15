@@ -1,0 +1,3 @@
+- hosts: k8s
+  roles:
+    - role: caktus.django-k8s

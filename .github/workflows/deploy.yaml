@@ -34,3 +34,6 @@ jobs:
           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 472354598015.dkr.ecr.us-east-1.amazonaws.com
           docker build --pull -t $DOCKER_REPO:$DOCKER_TAG --target deploy -f example-facets/Dockerfile .
           docker push $DOCKER_REPO:$DOCKER_TAG
+          cd example-facets/deploy/
+          ansible-galaxy install -r requirements.yaml
+          ansible-playbook deploy.yaml -l $ENV -e k8s_container_image_tag=$DOCKER_TAG

@@ -19,10 +19,6 @@ import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv(
     "DJANGO_SECRET_KEY",
@@ -183,6 +179,8 @@ LOGGING = {
     },
 }
 
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
 # DEPLOY: SECURITY
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-proxy-ssl-header
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
@@ -229,4 +227,35 @@ if os.getenv("WHITENOISE_ENABLED", "False") == "True":
     STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # DEPLOY: EMAIL
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_HOST = os.getenv("EMAIL_HOST", "localhost")
+if EMAIL_HOST != "localhost":
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+    EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+    EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", False)
+    EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", False)
+    # use TLS or SSL, not both:
+    assert not (EMAIL_USE_TLS and EMAIL_USE_SSL)
+    if EMAIL_USE_TLS:
+        default_smtp_port = 587
+    elif EMAIL_USE_SSL:
+        default_smtp_port = 465
+    else:
+        default_smtp_port = 25
+    EMAIL_PORT = os.getenv("EMAIL_PORT", default_smtp_port)
+    EMAIL_SUBJECT_PREFIX = "[django-filters-facet %s] " % ENVIRONMENT.title()
+    DEFAULT_FROM_EMAIL = f"noreply@{os.getenv('DOMAIN', os.environ)}"
+    SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
+# DEPLOY: SENTRY
+# ------------------------------------------------------------------------------
+SENTRY_DSN = os.getenv("SENTRY_DSN")
+if SENTRY_DSN:
+    import sentry_sdk
+    from sentry_sdk.integrations.django import DjangoIntegration
+
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration()],
+        environment=ENVIRONMENT,  # noqa: F405
+    )
