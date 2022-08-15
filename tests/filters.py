@@ -16,7 +16,7 @@ class StudentFilterSet(FacetedFilterSet):
 
     class Meta:
         model = Student
-        fields = ["grade", "name"]
+        fields = ["grade", "name", "classes"]
 
     def configure_facets(self):
         self.filters["grade"].facet = Facet()
@@ -24,3 +24,4 @@ class StudentFilterSet(FacetedFilterSet):
             queryset=lambda qs: qs.annotate(year=ExtractYear("dob")),
             group_by_filter_name=True,
         )
+        self.filters["classes"].facet = Facet()

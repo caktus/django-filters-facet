@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "django_browser_reload",
     "django_filters_facet",
     "traffic_stops",
+    "firearms",
 ]
 
 MIDDLEWARE = [

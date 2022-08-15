@@ -4,7 +4,7 @@ from django.db.models import Q
 
 from django_filters_facet import Facet
 
-from .factories import StudentFactory
+from .factories import ClassFactory, StudentFactory
 from .filters import StudentFilterSet
 from .models import Student
 
@@ -63,6 +63,16 @@ class TestChoicesField:
             {"count": 0, "is_active": True, "label": "1st", "value": 1},
         ]
         assert list(f.filters["grade"].facet.items_for_display()) == expected
+
+    def test_m2m(self):
+        c1 = ClassFactory(name="Physics")
+        c2 = ClassFactory(name="Algebra")
+        StudentFactory(classes=(c1, c2))
+        f = StudentFilterSet({"classes": [c2.id]}, queryset=Student.objects.all())
+        expected = [
+            {"count": 1, "is_active": True, "label": "Algebra", "value": 2},
+        ]
+        assert list(f.filters["classes"].facet.items_for_display()) == expected
 
 
 @pytest.mark.django_db

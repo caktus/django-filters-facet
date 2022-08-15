@@ -1,4 +1,8 @@
+import logging
+
 from django.db.models import Count
+
+logger = logging.getLogger(__name__)
 
 
 class Facet:
@@ -7,10 +11,13 @@ class Facet:
     share values within that filter's field.
     """
 
-    def __init__(self, exclude=None, queryset=None, group_by_filter_name=False):
+    def __init__(
+        self, exclude=None, queryset=None, group_by_filter_name=False, order_by="-count"
+    ):
         self.exclude = exclude
         self.queryset = queryset
         self.group_by_filter_name = group_by_filter_name
+        self.order_by = order_by
 
     @property
     def filter_name(self):
@@ -63,7 +70,9 @@ class Facet:
         by passing in items when constructing the Facet.
         """
         qs = self.get_queryset()
-        return qs.values(self.group_by).annotate(count=Count("pk")).order_by("-count")
+        return (
+            qs.values(self.group_by).annotate(count=Count("pk")).order_by(self.order_by)
+        )
 
     def get_facet_item_value(self, value):
         """
@@ -100,11 +109,15 @@ class Facet:
         """Return True if the facet is currently filtered by this facet item."""
         if self.is_filtered():
             raw_filtered_value = self.get_facet_item_value(filtered_value)
-            return raw_filtered_value == item_value
+            if isinstance(raw_filtered_value, list):
+                return item_value in raw_filtered_value
+            else:
+                return raw_filtered_value == item_value
         return False
 
     def items_for_display(self):
         """Returns context data for displaying the facet's values and counts."""
+        logger.debug(self.filter_name)
         filtered_value = self.get_filtered_value()
         facet_item_counts = self.get_items()
         if self.is_filtered() and not facet_item_counts:
@@ -113,9 +126,11 @@ class Facet:
             facet_item_counts = [{self.group_by: filtered_value, "count": 0}]
         for item in facet_item_counts:
             item_value = self.get_facet_item_value(item[self.group_by])
-            yield {
+            data = {
                 "label": self.get_facet_item_label(item_value=item_value),
                 "value": item_value,
                 "count": item["count"],
                 "is_active": self.get_facet_item_is_active(item_value, filtered_value),
             }
+            logger.debug(data)
+            yield data
