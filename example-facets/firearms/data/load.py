@@ -2,17 +2,29 @@ import json
 
 from pathlib import Path
 
-from django.conf import settings
+import requests
+
 from django.db import transaction
 from firearms.models import Date, Jurisdiction, Statute, Subject
 from tqdm import tqdm
 
+DEFAULT_URL = "https://django-filters-facet.s3.amazonaws.com/firearms/firearm-laws.json"
+
+
+def load_data_file(local_file):
+    """Download data from S3 or read in local file."""
+    if local_file:
+        with Path(local_file).open(encoding="UTF-8") as source:
+            objects = json.load(source)
+    else:
+        r = requests.get(DEFAULT_URL)
+        objects = r.json()
+    return objects
+
 
 @transaction.atomic()
-def run():
-    path = settings.BASE_DIR / "firearms" / "data" / "firearm-laws.json"
-    with Path(path).open(encoding="UTF-8") as source:
-        objects = json.load(source)
+def run(local_file=""):
+    objects = load_data_file(local_file=local_file)
     for obj in tqdm(objects):
         years = obj.get("years", [])
         date = f"{years[0]}-01-01" if years else None
