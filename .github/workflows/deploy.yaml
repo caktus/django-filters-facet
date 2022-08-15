@@ -13,6 +13,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+      ENV_URL: https://facets.caktus-built.com/
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -23,6 +24,13 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r example-facets/deploy/requirements.txt
+      - name: Start deployment
+        uses: bobheadxi/deployments@v1
+        id: deployment
+        with:
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: example-facets
       - name: Build, tag, push, and deploy image
         run: |
           echo "ENV is $ENV"
@@ -37,3 +45,13 @@ jobs:
           cd example-facets/deploy/
           ansible-galaxy install -r requirements.yaml
           ansible-playbook deploy.yaml -l $ENV -e k8s_container_image_tag=$DOCKER_TAG
+      - name: Update deployment status
+        uses: bobheadxi/deployments@v1
+        if: always()
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
+          env: example-facets
+          env_url: ${{ env.ENV_URL }}
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
