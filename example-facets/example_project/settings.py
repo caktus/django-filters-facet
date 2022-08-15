@@ -30,6 +30,7 @@ DEBUG = os.getenv("DJANGO_DEBUG", "True") == "True"
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost").split(":")
 
+ENVIRONMENT = os.getenv("ENVIRONMENT", "dev")
 
 # Application definition
 
