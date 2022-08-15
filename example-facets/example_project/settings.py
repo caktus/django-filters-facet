@@ -252,6 +252,7 @@ if EMAIL_HOST != "localhost":
 SENTRY_DSN = os.getenv("SENTRY_DSN")
 if SENTRY_DSN:
     import sentry_sdk
+
     from sentry_sdk.integrations.django import DjangoIntegration
 
     sentry_sdk.init(
