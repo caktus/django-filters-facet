@@ -1,5 +1,8 @@
-Django==4.0.6
+Django==4.0.7
 django-browser-reload==1.6.0
 django-filter==22.1
 dj-database-url==0.5.0
 psycopg2==2.9.3
+sentry-sdk==1.9.3
+uWSGI==2.0.20
+whitenoise==6.2.0

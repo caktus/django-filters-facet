@@ -1,0 +1,57 @@
+name: deploy
+
+on:
+  push:
+    branches: [main, deploy]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_REPO: 472354598015.dkr.ecr.us-east-1.amazonaws.com/django-filters-facet
+      ENV: production
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+      ENV_URL: https://facets.caktus-built.com/
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: pip
+          cache-dependency-path: example-facets/deploy/requirements.txt
+      - name: Install dependencies
+        run: |
+          pip install -r example-facets/deploy/requirements.txt
+      - name: Start deployment
+        uses: bobheadxi/deployments@v1
+        id: deployment
+        with:
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: example-facets
+      - name: Build, tag, push, and deploy image
+        run: |
+          echo "ENV is $ENV"
+          echo "DOCKER_REPO is $DOCKER_REPO"
+          export DOCKER_TAG="$ENV-$(git rev-parse --short HEAD)"
+          echo "DOCKER_TAG is $DOCKER_TAG"
+          aws --version
+          aws configure list
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 472354598015.dkr.ecr.us-east-1.amazonaws.com
+          docker build --pull -t $DOCKER_REPO:$DOCKER_TAG --target deploy -f example-facets/Dockerfile .
+          docker push $DOCKER_REPO:$DOCKER_TAG
+          cd example-facets/deploy/
+          ansible-galaxy install -r requirements.yaml
+          ansible-playbook deploy.yaml -l $ENV -e k8s_container_image_tag=$DOCKER_TAG
+      - name: Update deployment status
+        uses: bobheadxi/deployments@v1
+        if: always()
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
+          env: example-facets
+          env_url: ${{ env.ENV_URL }}
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}

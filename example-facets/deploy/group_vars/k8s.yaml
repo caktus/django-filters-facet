@@ -1,0 +1,122 @@
+# ----------------------------------------------------------------------------
+# Global: Common configuration variables for all environments being deployed
+#         to Kubernetes.
+# ----------------------------------------------------------------------------
+
+app_name: dff
+ansible_connection: local
+ansible_python_interpreter: '/usr/bin/env python3'
+
+aws_region: us-east-1
+aws_profile: saguaro-cluster
+
+# ----------------------------------------------------------------------------
+# caktus.django-k8s: Shared configuration variables for staging and production
+#                    environments.
+# ----------------------------------------------------------------------------
+
+k8s_auth_host: !vault |
+  $ANSIBLE_VAULT;1.1;AES256
+  63373062333236633763313164623933303230656362323638303136656265396466353764376631
+  6661336364313661633863383264313533383430376565300a373131313265646661626132353465
+  35323739383537643639616234303139323263623732376437353066316331636139306533633264
+  6437363236333738340a636562343539303339666564636532396430303739373261653233376439
+  30366636613633633736353430613436366665633837346366363237333164616334643132646662
+  38383933393733363761343061316233356434386232373362386631386534653734373763346464
+  32356164376530356238393731373462313736336135303561313732396138363233646163393538
+  32643264346263653661
+k8s_auth_ssl_ca_cert: k8s_auth_ssl_ca_cert.txt
+k8s_cluster_name: caktus-saguaro-cluster
+
+# App base configuration:
+django_app_name: example_project
+k8s_namespace: "{{ app_name }}-{{ env_name }}"
+k8s_ingress_certificate_issuer: letsencrypt-production
+
+# App pod configuration:
+k8s_container_name: app
+k8s_container_port: 8000
+k8s_container_image: 472354598015.dkr.ecr.us-east-1.amazonaws.com/django-filters-facet
+k8s_container_image_pull_policy: Always
+k8s_container_replicas: 2
+k8s_container_resources:
+  requests:
+    memory: 256Mi
+    cpu: 50m
+  limits:
+    cpu: 250m
+k8s_container_ingress_annotations:
+  nginx.ingress.kubernetes.io/proxy-body-size: 100m
+  # These are in seconds, but need to be specified without the trailing 's'
+  # usually seen in nginx.conf proper.
+  nginx.ingress.kubernetes.io/proxy-connect-timeout: 1800
+  nginx.ingress.kubernetes.io/proxy-send-timeout: 1800
+  nginx.ingress.kubernetes.io/proxy-read-timeout: 1800
+  # Workaround for lack of annotation for send_timeout parameter:
+  # https://github.com/kubernetes/ingress-nginx/issues/2441#issuecomment-419714384
+  nginx.ingress.kubernetes.io/configuration-snippet: |
+    send_timeout 1800s;
+k8s_migrations_enabled: true
+k8s_collectstatic_enabled: false
+
+# Shared environment variables:
+env_django_debug: false
+database_address: !vault |
+  $ANSIBLE_VAULT;1.1;AES256
+  64373166343264653563326637643430356336653131333731346233346530616432323036663030
+  3163343164373362633932616262376639383536393337640a373833393739313831343661623332
+  37363230346338613463383730613836656363623163323536346539383433623239623464663231
+  3231313861623963630a333765373832373833643431633836636332643664383162643461333133
+  63373863383830383831343531363533626166303861643061383934356639393564333963353938
+  33313233373139326134376130373637343339663563613332333433326631373232623630643937
+  323966376531393034336339313331323266
+env_database_url: "postgres://{{ app_name }}_{{ env_name }}:{{ database_password }}@{{ database_address }}:5432/{{ app_name }}_{{ env_name }}"
+env_django_settings: "{{ django_app_name }}.settings"
+# Email: ses-django-filters-facet.20220815-083011
+env_email_host: email-smtp.us-east-1.amazonaws.com
+env_email_use_tls: "true"
+env_email_host_user: !vault |
+  $ANSIBLE_VAULT;1.1;AES256
+  30393637353831643035313864363965386432313539383338653765633936633662303861643036
+  3537656537376339343238313036623566643237316433640a623232333963616330626131393662
+  32633434633935636264306632303833303562303963373366343461336532356563346537636132
+  3566386239383132310a356135393961323063356664353637383462373165626437393363393937
+  62373263376637313832396265613133613732363166313337383332646536356261
+env_email_host_pass: !vault |
+  $ANSIBLE_VAULT;1.1;AES256
+  30623130646437343831646630663035373932326330376161356233613339353530633539616339
+  3330626135616235383033313435643664393030663466640a616539613931386436393862656161
+  36343334636531396534663066393835363564326165613930373830326263333637653538613133
+  3765343061633762360a393962313230663538326461383638373465643662396439663233653739
+  63333839393838396238623965373332306365383661663530386437376262333766323638356561
+  6239346364333535633136306132663332376235376136666463
+# Sentry
+env_sentry_dsn: !vault |
+  $ANSIBLE_VAULT;1.1;AES256
+  39653165353166323464616337343931386133366566336335383464313232366136636231643634
+  3636356266353130643231306366623861303532316335380a356534643939653561396130656665
+  38353535623531356662343061356463343630373165336266666236613363396134353161313433
+  3435383430653331630a333934346335366239666235336464393162383830616633306531643531
+  39333163353463353465646130626231306430316166383133613438653936356465303066323962
+  36373937353132376237323564666562313338303864623433343963353263306464326661316462
+  37616339373563346333613938373231336236306531333863333465363433386534396639363932
+  64623132623631326463
+
+# Environment variables:
+k8s_environment_variables:
+  CONTAINER_IMAGE_TAG: "{{ k8s_container_image_tag }}"
+  DJANGO_DEBUG: "{{ env_django_debug | string | title | string }}"
+  DATABASE_URL: "{{ env_database_url }}"
+  DJANGO_SETTINGS_MODULE: "{{ env_django_settings }}"
+  DJANGO_SECRET_KEY: "{{ env_django_secret_key }}"
+  # DOMAIN is the ALLOWED_HOST
+  DOMAIN: "{{ k8s_domain_names[0] }}"
+  ALLOWED_HOSTS: "{{ k8s_domain_names[0] }}"
+  ENVIRONMENT: "{{ env_name }}"
+  # Email
+  EMAIL_HOST: "{{ env_email_host }}"
+  EMAIL_HOST_USER: "{{ env_email_host_user }}"
+  EMAIL_HOST_PASSWORD: "{{ env_email_host_pass }}"
+  EMAIL_USE_TLS: "{{ env_email_use_tls }}"
+  # Sentry
+  SENTRY_DSN: "{{ env_sentry_dsn }}"

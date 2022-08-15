@@ -19,18 +19,18 @@ import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-7wdf-7wi!f^(ztaw-*-9@^@8x8+@wkt5n5$$o3_q9v_9($&99m"
+SECRET_KEY = os.getenv(
+    "DJANGO_SECRET_KEY",
+    "django-insecure-7wdf-7wi!f^(ztaw-*-9@^@8x8+@wkt5n5$$o3_q9v_9($&99m",
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DJANGO_DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost").split(":")
 
+ENVIRONMENT = os.getenv("ENVIRONMENT", "dev")
 
 # Application definition
 
@@ -128,7 +128,141 @@ STATICFILES_DIRS = [
     BASE_DIR / "example_project/static",
 ]
 
+STATIC_ROOT = "/public/static"
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# A sample logging configuration. The only tangible logging
+# performed by this configuration is to send an email to
+# the site admins on every HTTP 500 error when DEBUG=False.
+# See http://docs.djangoproject.com/en/dev/topics/logging for
+# more details on how to customize your logging configuration.
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "normal": {
+            "format": "%(asctime)s %(name)-20s %(levelname)-8s %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        }
+    },
+    "filters": {
+        "require_debug_false": {"()": "django.utils.log.RequireDebugFalse"},
+        "require_debug_true": {"()": "django.utils.log.RequireDebugTrue"},
+    },
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "normal",
+        },
+        "mail_admins": {
+            "level": "ERROR",
+            "filters": ["require_debug_false"],
+            "class": "django.utils.log.AdminEmailHandler",
+        },
+    },
+    "loggers": {
+        "": {"handlers": ["console"], "level": "INFO"},
+        "django.request": {
+            "handlers": ["mail_admins"],
+            "level": "ERROR",
+            "propagate": True,
+        },
+        "django.security": {
+            "handlers": ["mail_admins"],
+            "level": "ERROR",
+            "propagate": True,
+        },
+    },
+}
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+# DEPLOY: SECURITY
+# https://docs.djangoproject.com/en/dev/ref/settings/#secure-proxy-ssl-header
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+# https://docs.djangoproject.com/en/dev/ref/settings/#secure-ssl-redirect
+SECURE_SSL_REDIRECT = os.getenv("DJANGO_SECURE_SSL_REDIRECT", "True") == "True"
+# https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-SESSION_COOKIE_SECURE
+SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE", "True") == "True"
+# https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-SESSION_COOKIE_HTTPONLY
+SESSION_COOKIE_HTTPONLY = os.getenv("SESSION_COOKIE_HTTPONLY", "True") == "True"
+# https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-CSRF_COOKIE_SECURE
+CSRF_COOKIE_SECURE = os.getenv("CSRF_COOKIE_SECURE", "True") == "True"
+# https://docs.djangoproject.com/en/dev/topics/security/#ssl-https
+# https://docs.djangoproject.com/en/dev/ref/settings/#secure-hsts-seconds
+# TODO: set this to 60 seconds first and then to 518400 once you prove the former works
+SECURE_HSTS_SECONDS = 60
+# https://docs.djangoproject.com/en/dev/ref/settings/#secure-hsts-include-subdomains
+SECURE_HSTS_INCLUDE_SUBDOMAINS = (
+    os.getenv("DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS", "True") == "True"
+)
+# https://docs.djangoproject.com/en/dev/ref/settings/#secure-hsts-preload
+SECURE_HSTS_PRELOAD = os.getenv("DJANGO_SECURE_HSTS_PRELOAD", "True") == "True"
+# https://docs.djangoproject.com/en/dev/ref/middleware/#x-content-type-options-nosniff
+SECURE_CONTENT_TYPE_NOSNIFF = (
+    os.getenv("DJANGO_SECURE_CONTENT_TYPE_NOSNIFF", "True") == "True"
+)
+# https://docs.djangoproject.com/en/3.2/ref/settings/#secure-referrer-policy
+SECURE_REFERRER_POLICY = os.getenv("SECURE_REFERRER_POLICY", "same-origin")
+
+# DEPLOY: STATIC
+if os.getenv("WHITENOISE_ENABLED", "False") == "True":
+    # Disable Django's own staticfiles handling in favour of WhiteNoise
+    INSTALLED_APPS.remove("django.contrib.staticfiles")
+    INSTALLED_APPS.extend(
+        [
+            "whitenoise.runserver_nostatic",
+            "django.contrib.staticfiles",
+        ]
+    )
+    MIDDLEWARE.remove("django.middleware.security.SecurityMiddleware")
+    MIDDLEWARE = [
+        "django.middleware.security.SecurityMiddleware",
+        "whitenoise.middleware.WhiteNoiseMiddleware",
+    ] + MIDDLEWARE
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# DEPLOY: EMAIL
+EMAIL_HOST = os.getenv("EMAIL_HOST", "localhost")
+if EMAIL_HOST != "localhost":
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+    EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+    EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", False)
+    EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", False)
+    # use TLS or SSL, not both:
+    assert not (EMAIL_USE_TLS and EMAIL_USE_SSL)
+    if EMAIL_USE_TLS:
+        default_smtp_port = 587
+    elif EMAIL_USE_SSL:
+        default_smtp_port = 465
+    else:
+        default_smtp_port = 25
+    EMAIL_PORT = os.getenv("EMAIL_PORT", default_smtp_port)
+    EMAIL_SUBJECT_PREFIX = "[django-filters-facet %s] " % ENVIRONMENT.title()
+    DEFAULT_FROM_EMAIL = f"noreply@{os.getenv('DOMAIN', os.environ)}"
+    SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
+# DEPLOY: SENTRY
+SENTRY_DSN = os.getenv("SENTRY_DSN")
+if SENTRY_DSN:
+    import sentry_sdk
+
+    from sentry_sdk.integrations.django import DjangoIntegration
+
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration()],
+        environment=ENVIRONMENT,  # noqa: F405
+        release=os.getenv("CONTAINER_IMAGE_TAG"),
+        # % of captured performance monitoring transactions
+        traces_sample_rate=1.0,
+    )
+
+# DEPLOY: ADMINS
+ADMINS = [("Caktus", "admin@caktusgroup.com")]

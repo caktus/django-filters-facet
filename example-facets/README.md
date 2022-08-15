@@ -13,3 +13,28 @@ Import (within Docker container):
 ```sh
 cat traffic_stops/data/stops.csv | psql $DATABASE_URL -c "COPY traffic_stops_stop FROM STDIN CSV HEADER";
 ```
+
+## Deploy
+
+Build production image:
+
+```
+docker build --target deploy -f example-facets/Dockerfile -t facet_deploy --progress=plain .
+```
+
+Or create `docker-compose.override.yaml`:
+
+```yaml
+version: '3'
+
+services:
+  django:
+    environment:
+      DJANGO_DEBUG: "False"
+      WHITENOISE_ENABLED: "True"
+    build:
+      target: deploy
+    command: ["uwsgi", "--show-config"]
+```
+
+And run `docker compose build django`.

@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "dev": "npx tailwindcss -i ./example_project/static/css/input.css -o ./example_project/static/css/main.css --watch"
+    "dev": "npx tailwindcss -i ./example_project/static/css/input.css -o ./example_project/static/css/main.css --watch",
+    "build": "npx tailwindcss -i ./example_project/static/css/input.css -o ./example_project/static/css/main.css --minify"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.7",
