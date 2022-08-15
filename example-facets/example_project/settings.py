@@ -248,7 +248,6 @@ if EMAIL_HOST != "localhost":
     SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 # DEPLOY: SENTRY
-# ------------------------------------------------------------------------------
 SENTRY_DSN = os.getenv("SENTRY_DSN")
 if SENTRY_DSN:
     import sentry_sdk
@@ -259,3 +258,6 @@ if SENTRY_DSN:
         integrations=[DjangoIntegration()],
         environment=ENVIRONMENT,  # noqa: F405
     )
+
+# DEPLOY: ADMINS
+ADMINS = [("Caktus", "admin@caktusgroup.com")]
