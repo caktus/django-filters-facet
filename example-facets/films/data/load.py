@@ -1,4 +1,5 @@
 import json
+import csv
 
 from datetime import datetime as dt
 
@@ -29,7 +30,13 @@ def load_data_file(local_file):
 def run(local_file=""):
     objects = load_data_file(local_file=local_file)
     for obj in tqdm(objects):
-        obj["date_added"] = dt.strptime(str, "%m-%d-%y")
+        local_date_time = obj["date_added"].strip()
+        if not local_date_time:
+            continue
+        obj["date_added"] = dt.strptime(local_date_time, "%B %d, %Y")
         law = Film.objects.create(**obj)
 
-# (objects.date_added)
+    print(obj)
+
+
+
