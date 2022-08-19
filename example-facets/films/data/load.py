@@ -7,7 +7,7 @@ import requests
 
 from django.db import transaction
 
-# from films.models import Film
+from films.models import Film
 from tqdm import tqdm
 
 # import json
@@ -35,6 +35,6 @@ def run(local_file=""):
         if not local_date_time:
             continue
         obj["date_added"] = dt.strptime(local_date_time, "%B %d, %Y")
-        # law = Film.objects.create(**obj)
+        Film.objects.create(**obj)
 
     print(obj)
