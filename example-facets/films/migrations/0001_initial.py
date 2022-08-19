@@ -7,25 +7,32 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Film',
+            name="Film",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('show_id', models.CharField(max_length=100)),
-                ('type', models.CharField(max_length=100)),
-                ('title', models.CharField(max_length=100)),
-                ('director', models.CharField(max_length=100)),
-                ('cast', models.TextField()),
-                ('country', models.CharField(max_length=25)),
-                ('date_added', models.DateField()),
-                ('release_year', models.DateField()),
-                ('rating', models.CharField(max_length=15)),
-                ('duration', models.CharField(max_length=100)),
-                ('listed_in', models.TextField()),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("show_id", models.CharField(max_length=100)),
+                ("type", models.CharField(max_length=100)),
+                ("title", models.CharField(max_length=100)),
+                ("director", models.CharField(max_length=100)),
+                ("cast", models.TextField()),
+                ("country", models.CharField(max_length=25)),
+                ("date_added", models.DateField()),
+                ("release_year", models.DateField()),
+                ("rating", models.CharField(max_length=15)),
+                ("duration", models.CharField(max_length=100)),
+                ("listed_in", models.TextField()),
             ],
         ),
     ]
