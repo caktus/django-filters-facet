@@ -1,4 +1,4 @@
-Nimport json
+import json
 import csv
 
 from datetime import datetime as dt
