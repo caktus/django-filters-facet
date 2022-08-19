@@ -37,6 +37,3 @@ def run(local_file=""):
         law = Film.objects.create(**obj)
 
     print(obj)
-
-
-
