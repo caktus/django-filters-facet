@@ -1,16 +1,17 @@
-import json
 import csv
 
 from datetime import datetime as dt
-
 from pathlib import Path
 
 import requests
-import csv
 
 from django.db import transaction
-from films.models import Film
+
+# from films.models import Film
 from tqdm import tqdm
+
+# import json
+
 
 DEFAULT_URL = "https://django-filters-facet.s3.amazonaws.com/TBD"
 
@@ -34,6 +35,6 @@ def run(local_file=""):
         if not local_date_time:
             continue
         obj["date_added"] = dt.strptime(local_date_time, "%B %d, %Y")
-        law = Film.objects.create(**obj)
+        # law = Film.objects.create(**obj)
 
     print(obj)
