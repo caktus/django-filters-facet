@@ -6,7 +6,6 @@ from pathlib import Path
 import requests
 
 from django.db import transaction
-
 from films.models import Film
 from tqdm import tqdm
 
