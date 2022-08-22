@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "django_filters_facet",
     "traffic_stops",
     "firearms",
+    "films",
 ]
 
 MIDDLEWARE = [
