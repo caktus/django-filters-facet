@@ -24,6 +24,7 @@ urlpatterns = [
     path("traffic-stops/", include("traffic_stops.urls")),
     path("firearms/", include("firearms.urls")),
     path("__reload__/", include("django_browser_reload.urls")),
+    path("films/", include("films.urls")),
 ]
 
 if settings.DEBUG:
