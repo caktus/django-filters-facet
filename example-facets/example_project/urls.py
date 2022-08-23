@@ -25,6 +25,7 @@ urlpatterns = [
     path("firearms/", include("firearms.urls")),
     path("__reload__/", include("django_browser_reload.urls")),
     path("films/", include("films.urls")),
+    # path("", FilmListView.as_view(template_name="films_list.html"))
 ]
 
 if settings.DEBUG:

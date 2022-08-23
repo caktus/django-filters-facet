@@ -12,7 +12,7 @@ from tqdm import tqdm
 # import json
 
 
-DEFAULT_URL = "https://django-filters-facet.s3.amazonaws.com/TBD"
+DEFAULT_URL = "https://django-filters-facet.s3.amazonaws.com/films/"
 
 
 def load_data_file(local_file):
