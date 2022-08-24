@@ -30,17 +30,20 @@
             scope="row"
             class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
           >
-            {{ stop.date }}
+            {{ film.title }}
           </th>
-          <td class="py-4 px-6">{{ stop.driver_race }}</td>
-          <td class="py-4 px-6">
-            {% get_facet_display filter 'driver_gender' stop.driver_gender %}
-          </td>
-          <td class="py-4 px-6">{{ stop.officer_id }}</td>
-          <td class="py-4 px-6">{{ stop.get_purpose_display }}</td>
-          <td class="py-4 px-6">
-            {% if stop.search_type %}{% get_facet_display filter 'search_type' stop.search_type %}{% endif %}
-          </td>
+          <td class="py-4 px-6">{{ film.type }}</td>
+          <td class="py-4 px-6">{{ film.genre }}</td>
+          <td class="py-4 px-6">{{ film.director }}</td>
+          <td class="py-4 px-6">{{ film.cast }}</td>
+          <td class="py-4 px-6">{{ film.country }}</td>
+          <td class="py-4 px-6">{{ film.release_year }}</td>
+          <th
+            scope="row"
+            class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+          >
+            {{ film.release_year }}
+          </th>
         </tr>
         {% endfor %}
       </tbody>
@@ -97,8 +100,8 @@
 <aside class="w-full md:w-1/3 flex flex-col items-center px-3">
   <div class="w-full bg-white shadow flex flex-col px-6 pb-6 dark:bg-slate-600">
     <div class="w-full pt-4 mb-4">
-      <h1 class="font-serif text-2xl border-b-4">North Carolina Traffic Stops</h1>
-      <p class="mt-1 max-w-2xl text-sm text-gray-500">Source: <a target="_blank" class="no-underline hover:underline" href="https://nccopwatch.org/">NC CopWatch</a></p>
+      <h1 class="font-serif text-2xl border-b-4">Netflix films and tv-shows</h1>
+      <p class="mt-1 max-w-2xl text-sm text-gray-500">Source: <a target="_blank" class="no-underline hover:underline" href="https://www.kaggle.com/datasets/shivamb/netflix-shows">Kaggle netflix-shows</a></p>
     </div>
     {% show_facets filter %}
   </div>

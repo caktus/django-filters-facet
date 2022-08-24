@@ -1,7 +1,7 @@
 # from django.db.models import Case, F, FilteredRelation, Q, Value, When
 from django.views.generic.list import ListView
 
-# from .filters import FilmFilterSet
+from .filters import FilmFilterSet
 from .models import Film
 
 
@@ -13,7 +13,9 @@ class FilmListView(ListView):
     paginate_by = 25
 
     def get_queryset(self):
-        return super.get_queryset()
+        qs = super().get_queryset()
+        self.filter_set = FilmFilterSet(self.request.GET, queryset=qs)
+        return self.filter_set.qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
