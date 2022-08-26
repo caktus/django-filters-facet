@@ -19,5 +19,5 @@ class FilmListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # context["filter"] = self.filter_set
+        context["filter"] = self.filter_set
         return context

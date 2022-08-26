@@ -33,17 +33,11 @@
             {{ film.title }}
           </th>
           <td class="py-4 px-6">{{ film.type }}</td>
-          <td class="py-4 px-6">{{ film.genre }}</td>
+          <td class="py-4 px-6">{{ film.listed_in }}</td>
           <td class="py-4 px-6">{{ film.director }}</td>
           <td class="py-4 px-6">{{ film.cast }}</td>
           <td class="py-4 px-6">{{ film.country }}</td>
           <td class="py-4 px-6">{{ film.release_year }}</td>
-          <th
-            scope="row"
-            class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-          >
-            {{ film.release_year }}
-          </th>
         </tr>
         {% endfor %}
       </tbody>

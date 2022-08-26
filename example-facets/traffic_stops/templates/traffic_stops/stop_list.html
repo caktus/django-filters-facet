@@ -1,9 +1,5 @@
-{% extends 'base.html' %}
-{% load search_tags %}
-
-{% block title %}NC Traffic Stops{% endblock %}
-
-{% block content %}
+{% extends 'base.html' %} {% load search_tags %} {% block title %}NC Traffic
+Stops{% endblock %} {% block content %}
 <!-- Posts Section -->
 <section class="w-full md:w-2/3 flex flex-col items-center px-3">
   <div class="overflow-x-auto relative">
@@ -38,7 +34,8 @@
           <td class="py-4 px-6">{{ stop.officer_id }}</td>
           <td class="py-4 px-6">{{ stop.get_purpose_display }}</td>
           <td class="py-4 px-6">
-            {% if stop.search_type %}{% get_facet_display filter 'search_type' stop.search_type %}{% endif %}
+            {% if stop.search_type %}{% get_facet_display filter 'search_type'
+            stop.search_type %}{% endif %}
           </td>
         </tr>
         {% endfor %}
@@ -96,8 +93,18 @@
 <aside class="w-full md:w-1/3 flex flex-col items-center px-3">
   <div class="w-full bg-white shadow flex flex-col px-6 pb-6 dark:bg-slate-600">
     <div class="w-full pt-4 mb-4">
-      <h1 class="font-serif text-2xl border-b-4">North Carolina Traffic Stops</h1>
-      <p class="mt-1 max-w-2xl text-sm text-gray-500">Source: <a target="_blank" class="no-underline hover:underline" href="https://nccopwatch.org/">NC CopWatch</a></p>
+      <h1 class="font-serif text-2xl border-b-4">
+        North Carolina Traffic Stops
+      </h1>
+      <p class="mt-1 max-w-2xl text-sm text-gray-500">
+        Source:
+        <a
+          target="_blank"
+          class="no-underline hover:underline"
+          href="https://nccopwatch.org/"
+          >NC CopWatch</a
+        >
+      </p>
     </div>
     {% show_facets filter %}
   </div>
