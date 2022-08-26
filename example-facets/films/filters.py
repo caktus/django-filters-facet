@@ -21,13 +21,13 @@ class FilmFilterSet(FacetedFilterSet):
         self.filters["listed_in"].facet = Facet()
 
     def filter_search(self, queryset, name, value):
-        vector = search.SearchVector("title", weight="B")
+        vector = search.SearchVector("description", weight="B")
         query = search.SearchQuery(value)
         return (
             queryset.annotate(
                 rank=search.SearchRank(vector, query),
                 headline=search.SearchHeadline(
-                    "title",
+                    "description",
                     query,
                     min_words=30,
                     start_sel="<mark>",
