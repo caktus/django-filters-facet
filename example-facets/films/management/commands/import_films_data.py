@@ -7,7 +7,9 @@ from films.models import Film
 class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
-            "--file", default="", help="Use local JSON file instead of S3 URL"
+            "--file",
+            default="/code/films/data/netflix_titles.csv",
+            help="Use local JSON file to load data",
         )
         parser.add_argument(
             "--clean",
