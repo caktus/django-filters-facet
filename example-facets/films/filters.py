@@ -9,6 +9,7 @@ from .models import Film
 
 class FilmFilterSet(FacetedFilterSet):
     search = django_filters.CharFilter(method="filter_search", label="Search")
+    listed_in = django_filters.CharFilter(label="Genre")
 
     class Meta:
         model = Film
@@ -21,7 +22,13 @@ class FilmFilterSet(FacetedFilterSet):
         self.filters["listed_in"].facet = Facet()
 
     def filter_search(self, queryset, name, value):
-        vector = search.SearchVector("description", weight="B")
+        vector = (
+            search.SearchVector("title", weight="A")
+            + search.SearchVector("description", weight="A")
+            + search.SearchVector("director", weight="B")
+            + search.SearchVector("cast", weight="B")
+            + search.SearchVector("country", weight="C")
+        )
         query = search.SearchQuery(value)
         return (
             queryset.annotate(
@@ -29,7 +36,7 @@ class FilmFilterSet(FacetedFilterSet):
                 headline=search.SearchHeadline(
                     "description",
                     query,
-                    min_words=30,
+                    min_words=6,
                     start_sel="<mark>",
                     stop_sel="</mark>",
                 ),
