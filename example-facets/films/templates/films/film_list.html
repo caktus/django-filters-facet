@@ -1,5 +1,9 @@
-{% extends 'base.html' %} {% load search_tags %} {% block title %}NC Traffic
-Stops{% endblock %} {% block content %}
+{% extends 'base.html' %}
+{% load search_tags %}
+
+{% block title %}Films{% endblock %}
+
+{% block content %}
 <!-- Posts Section -->
 <section class="w-full md:w-2/3 flex flex-col items-center px-3">
   <div class="overflow-x-auto relative">
@@ -10,33 +14,30 @@ Stops{% endblock %} {% block content %}
         class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
       >
         <tr>
-          <th scope="col" class="py-3 px-6">Stop Date</th>
-          <th scope="col" class="py-3 px-6">Race</th>
-          <th scope="col" class="py-3 px-6">Gender</th>
-          <th scope="col" class="py-3 px-6">Officer ID</th>
-          <th scope="col" class="py-3 px-6">Stop Purpose</th>
-          <th scope="col" class="py-3 px-6">Search Type</th>
+          <th scope="col" class="py-3 px-6">Title</th>
+          <th scope="col" class="py-3 px-6">Type</th>
+          <th scope="col" class="py-3 px-6">Genre</th>
+          <th scope="col" class="py-3 px-6">Director</th>
+          <th scope="col" class="py-3 px-6">Cast</th>
+          <th scope="col" class="py-3 px-6">Country</th>
+          <th scope="col" class="py-3 px-6">Release Year</th>
         </tr>
       </thead>
       <tbody>
-        {% for stop in object_list %}
+        {% for film in object_list %}
         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
           <th
             scope="row"
             class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
           >
-            {{ stop.date }}
+            {{ film.title }}
           </th>
-          <td class="py-4 px-6">{{ stop.driver_race }}</td>
-          <td class="py-4 px-6">
-            {% get_facet_display filter 'driver_gender' stop.driver_gender %}
-          </td>
-          <td class="py-4 px-6">{{ stop.officer_id }}</td>
-          <td class="py-4 px-6">{{ stop.get_purpose_display }}</td>
-          <td class="py-4 px-6">
-            {% if stop.search_type %}{% get_facet_display filter 'search_type'
-            stop.search_type %}{% endif %}
-          </td>
+          <td class="py-4 px-6">{{ film.type }}</td>
+          <td class="py-4 px-6">{{ film.listed_in }}</td>
+          <td class="py-4 px-6">{{ film.director }}</td>
+          <td class="py-4 px-6">{{ film.cast }}</td>
+          <td class="py-4 px-6">{{ film.country }}</td>
+          <td class="py-4 px-6">{{ film.release_year }}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -93,18 +94,8 @@ Stops{% endblock %} {% block content %}
 <aside class="w-full md:w-1/3 flex flex-col items-center px-3">
   <div class="w-full bg-white shadow flex flex-col px-6 pb-6 dark:bg-slate-600">
     <div class="w-full pt-4 mb-4">
-      <h1 class="font-serif text-2xl border-b-4">
-        North Carolina Traffic Stops
-      </h1>
-      <p class="mt-1 max-w-2xl text-sm text-gray-500">
-        Source:
-        <a
-          target="_blank"
-          class="no-underline hover:underline"
-          href="https://nccopwatch.org/"
-          >NC CopWatch</a
-        >
-      </p>
+      <h1 class="font-serif text-2xl border-b-4">Netflix films and tv-shows</h1>
+      <p class="mt-1 max-w-2xl text-sm text-gray-500">Source: <a target="_blank" class="no-underline hover:underline" href="https://www.kaggle.com/datasets/shivamb/netflix-shows">Kaggle netflix-shows</a></p>
     </div>
     {% show_facets filter %}
   </div>

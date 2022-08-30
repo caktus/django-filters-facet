@@ -8,6 +8,7 @@ COPY example-facets/example_project/static example_project/static
 COPY example-facets/example_project/templates example_project/templates
 COPY example-facets/traffic_stops/templates traffic_stops/templates
 COPY example-facets/firearms/templates firearms/templates
+COPY example-facets/films/templates films/templates
 COPY src/django_filters_facet/templates /django-filters-facet/src/django_filters_facet/templates
 RUN npm run build
 
