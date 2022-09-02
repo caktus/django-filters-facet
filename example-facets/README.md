@@ -1,5 +1,38 @@
 # example-facets project
 
+This project demos the functionality of django-filters-facet.
+
+## Development Environment
+
+A Dockerfile is provided for convenience. You can run:
+
+```sh
+docker compose up -d --build django
+```
+
+### VS Code Development Container
+
+If you use VS Code, a `devcontainer.json` file is configured for use with the
+[Visual Studio Code Remote -
+Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+extension. Simply open the root django-filters-facet folder in VS Code and
+select **Reopen in Container**.
+
+## Load example data
+
+Migrate models:
+
+```sh
+python manage.py migrate
+```
+
+Load individual datasets:
+
+```sh
+python manage.py import_films_data
+python manage.py import_firearms_data
+```
+
 ## Traffic stops data
 
 Export (from host machine):

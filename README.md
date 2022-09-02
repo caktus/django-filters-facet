@@ -88,11 +88,10 @@ this project, check out [django-filters-facet on Github](https://github.com/cakt
 
 Development sponsored by [Caktus Consulting Group, LLC](http://www.caktusgroup.com/).
 
-### Using a Development Container
+### Example project
 
-If you use VS Code, a `devcontainer.json` file is provided to open the app,
+See `example-facets/README.md` documents how to setup the app,
 `django_filters_facet`, and the `example-facets` Django project for development.
-See `example-facets/README.md` for more information.
 
 ### Unit tests
 
