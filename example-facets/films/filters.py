@@ -9,17 +9,14 @@ from .models import Film
 
 class FilmFilterSet(FacetedFilterSet):
     search = django_filters.CharFilter(method="filter_search", label="Search")
-    listed_in = django_filters.CharFilter(label="Genre")
 
     class Meta:
         model = Film
-        fields = ["type", "release_year", "rating", "listed_in"]
+        fields = ["type", "genres"]
 
     def configure_facets(self):
         self.filters["type"].facet = Facet()
-        self.filters["release_year"].facet = Facet()
-        self.filters["rating"].facet = Facet()
-        self.filters["listed_in"].facet = Facet()
+        self.filters["genres"].facet = Facet()
 
     def filter_search(self, queryset, name, value):
         vector = (

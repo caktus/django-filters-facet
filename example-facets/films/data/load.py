@@ -4,7 +4,7 @@ from datetime import datetime as dt
 from pathlib import Path
 
 from django.db import transaction
-from films.models import Film
+from films.models import Film, Genre
 from tqdm import tqdm
 
 
@@ -19,4 +19,8 @@ def run(local_file):
             continue
         obj["date_added"] = dt.strptime(local_date_time, "%B %d, %Y")
         obj["release_year"] = dt.strptime(local_release_year, "%Y")
-        Film.objects.create(**obj)
+        film = Film.objects.create(**obj)
+        genre_names = [n.strip() for n in obj["listed_in"].split(",")]
+        for name in genre_names:
+            genre, _ = Genre.objects.get_or_create(name=name)
+            film.genres.add(genre)

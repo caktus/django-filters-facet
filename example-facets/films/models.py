@@ -14,6 +14,14 @@ class Film(models.Model):
     duration = models.CharField(max_length=1000)
     listed_in = models.TextField()
     description = models.TextField(default="")
+    genres = models.ManyToManyField("films.Genre")
 
     def __str__(self):
         return self.title
+
+
+class Genre(models.Model):
+    name = models.CharField(max_length=1000)
+
+    def __str__(self):
+        return self.name
