@@ -14,3 +14,6 @@ class Film(models.Model):
     duration = models.CharField(max_length=1000)
     listed_in = models.TextField()
     description = models.TextField(default="")
+
+    def __str__(self):
+        return self.title
