@@ -1,4 +1,4 @@
-# from django.db.models import Case, F, FilteredRelation, Q, Value, When
+from django.db.models import Count
 from django.views.generic.list import ListView
 
 from .filters import FilmFilterSet
@@ -20,4 +20,20 @@ class FilmListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["filter"] = self.filter_set
+        return context
+
+
+class ManualFilmListView(ListView):
+    # https://docs.djangoproject.com/en/4.0/ref/class-based-views/generic-display/#listview
+
+    model = Film
+    paginate_by = 5
+    template_name_suffix = "_list_manual"
+
+    def get_queryset(self):
+        return super().get_queryset().filter(rating="G")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["film_types"] = Film.objects.values("type").annotate(count=Count("id"))
         return context

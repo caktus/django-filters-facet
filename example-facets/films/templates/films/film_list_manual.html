@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<ul>
+{% for film in object_list %}
+    <li>{{ film.title }}</li>
+{% endfor %}
+</ul>
+
+<ul>
+{% for film_type in film_types %}
+    <li>{{ film_type.type }} ({{ film_type.count }})</li>
+{% endfor %}
+</ul>
+
+{% endblock %}
