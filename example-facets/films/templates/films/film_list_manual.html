@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load search_tags %}
 
 {% block content %}
 <ul>
@@ -7,10 +8,5 @@
 {% endfor %}
 </ul>
 
-<ul>
-{% for film_type in film_types %}
-    <li>{{ film_type.type }} ({{ film_type.count }})</li>
-{% endfor %}
-</ul>
-
+{% show_facets filter %}
 {% endblock %}

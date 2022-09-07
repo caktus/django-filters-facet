@@ -1,7 +1,7 @@
 from django.db.models import Count
 from django.views.generic.list import ListView
 
-from .filters import FilmFilterSet
+from .filters import FilmFilterSet, SimpleFilmFilterSet
 from .models import Film
 
 
@@ -31,9 +31,13 @@ class ManualFilmListView(ListView):
     template_name_suffix = "_list_manual"
 
     def get_queryset(self):
-        return super().get_queryset().filter(rating="G")
+        qs = super().get_queryset()
+        self.filter_set = SimpleFilmFilterSet(self.request.GET, queryset=qs)
+        return self.filter_set.qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["film_types"] = Film.objects.values("type").annotate(count=Count("id"))
+        context["film_types"] = (
+            self.get_queryset().values("type").annotate(count=Count("id"))
+        )
         return context

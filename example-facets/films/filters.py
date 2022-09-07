@@ -44,3 +44,12 @@ class FilmFilterSet(FacetedFilterSet):
             .filter(rank__gt=0.1)
             .order_by("-rank")
         )
+
+
+class SimpleFilmFilterSet(FacetedFilterSet):
+    class Meta:
+        model = Film
+        fields = ["type"]
+
+    def configure_facets(self):
+        self.filters["type"].facet = Facet()
