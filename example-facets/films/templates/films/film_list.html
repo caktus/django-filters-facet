@@ -19,8 +19,6 @@
           <th scope="col" class="py-3 px-6">Genre</th>
           <th scope="col" class="py-3 px-6">Description</th>
           <th scope="col" class="py-3 px-6">Cast</th>
-          <th scope="col" class="py-3 px-6">Country</th>
-          <th scope="col" class="py-3 px-6">Release Year</th>
         </tr>
       </thead>
       <tbody>
@@ -30,14 +28,12 @@
             scope="row"
             class="py-4 px-6 font-medium text-gray-900 dark:text-white"
           >
-            {{ film.title }}
+            {{ film.title }} {% if film.rank %}{{ film.rank }}{% endif %}
           </th>
           <td class="py-4 px-6">{{ film.type }}</td>
           <td class="py-4 px-6">{{ film.listed_in }}</td>
-          <td class="py-4 px-6">{{ film.headline|safe }}</td>
+          <td class="py-4 px-6">{{ film.description|safe }}</td>
           <td class="py-4 px-6">{{ film.cast }}</td>
-          <td class="py-4 px-6">{{ film.country }}</td>
-          <td class="py-4 px-6">{{ film.release_year }} ({{ film.rank }})</td>
         </tr>
         {% endfor %}
       </tbody>

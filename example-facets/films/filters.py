@@ -21,24 +21,18 @@ class FilmFilterSet(FacetedFilterSet):
     def filter_search(self, queryset, name, value):
         vector = (
             search.SearchVector("title", weight="A")
-            + search.SearchVector("description", weight="A")
+            + search.SearchVector("description", weight="B")
             + search.SearchVector("director", weight="B")
             + search.SearchVector("cast", weight="B")
             + search.SearchVector("country", weight="C")
         )
-        query = search.SearchQuery(value)
+        query = search.SearchQuery(value, search_type="websearch")
         return (
             queryset.annotate(
+                search=vector,
                 rank=search.SearchRank(vector, query),
-                headline=search.SearchHeadline(
-                    "description",
-                    query,
-                    min_words=6,
-                    start_sel="<mark>",
-                    stop_sel="</mark>",
-                ),
             )
-            .filter(rank__gt=0.1)
+            .filter(search=query)
             .order_by("-rank")
         )
 
