@@ -28,7 +28,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install poetry
-        run:
+        run: |
           python3 -m pip install --user pipx
           python3 -m pipx ensurepath
           pipx install poetry
