@@ -2,11 +2,13 @@ name: deploy
 
 on:
   push:
-    branches: [main, deploy]
+    branches: [main, deploy, self-hosted-runner]
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on:
+      - self-hosted
+      - saguaro
     env:
       DOCKER_REPO: 472354598015.dkr.ecr.us-east-1.amazonaws.com/django-filters-facet
       ENV: production

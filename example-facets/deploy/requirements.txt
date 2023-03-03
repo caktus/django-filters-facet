@@ -1,7 +1,4 @@
-ansible==5.10.0
-invoke-kubesae==0.0.19
-openshift==0.13.1
-kubernetes-validate~=1.22.0
-boto==2.49.0
-boto3==1.17.74
-awscli==1.19.74
+ansible==6.7.0
+openshift==0.12.1
+kubernetes-validate~=1.24.1
+awscli==1.27.84
