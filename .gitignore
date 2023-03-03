@@ -137,3 +137,4 @@ example-facets/traffic_stops/data/*.csv
 docker-compose.override.yml
 *.json
 .DS_Store
+bin
