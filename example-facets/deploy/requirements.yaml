@@ -1,3 +1,3 @@
 - src: https://github.com/caktus/ansible-role-django-k8s
   name: caktus.django-k8s
-  version: v1.5.1
+  version: v1.6.0
