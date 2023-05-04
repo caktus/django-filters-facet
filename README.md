@@ -1,6 +1,6 @@
 # django-filters-facet
 
-django-filters-facet is a
+django-filters-facet is  a
 [django-filter](https://pypi.org/project/django-filter/) extension to refine
 search results using faceted navigation functionality.
 
