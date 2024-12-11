@@ -1,4 +1,4 @@
-ansible==7.5.0
+ansible==8.0.0
 openshift==0.13.2
 kubernetes-validate~=1.30
 awscli==1.36.17
