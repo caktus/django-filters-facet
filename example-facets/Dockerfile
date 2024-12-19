@@ -114,6 +114,9 @@ ENV UWSGI_HTTP=:8000 UWSGI_MASTER=1 UWSGI_HTTP_AUTO_CHUNKED=1 UWSGI_HTTP_KEEPALI
 # Number of uWSGI workers and threads per worker (customize as needed):
 ENV UWSGI_WORKERS=2 UWSGI_THREADS=4
 
+# Reload workers after the specified amount of managed requests (avoid memory leaks)
+ENV UWSGI_MAX_REQUESTS=1000
+
 # uWSGI static file serving configuration (customize or comment out if not needed):
 ENV UWSGI_STATIC_MAP="/static/=/public/static/" UWSGI_STATIC_EXPIRES_URI="/static/.*\.[a-f0-9]{12,}\.(css|js|png|jpg|jpeg|gif|ico|woff|ttf|otf|svg|scss|map|txt) 315360000"
 
