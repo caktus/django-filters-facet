@@ -1,4 +1,4 @@
-ansible==7.5.0
-openshift==0.13.1
-kubernetes-validate~=1.25.2
-awscli==1.27.84
+ansible==8.0.0
+openshift==0.13.2
+kubernetes-validate<1.31
+awscli==1.36.17
